@@ -1,0 +1,144 @@
+{% extends "make_enquete_setting/base.html" %}
+
+{% load static i18n %}
+
+{% block title %}{% trans 'アンケート設定' %}{% endblock title %}
+
+{% block extra_js %}
+  <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}" type="text/javascript"
+          charset="UTF-8"></script>
+  <script>
+    // JSON文字列内に含まれる改行をパース可能な形式に変換
+    const preProcessNewLine = (inputStr) => {
+      return inputStr.replace(/\r?\n/g, '\\n')
+    };
+
+    // 質問形式の情報をJSON形式で受け取り連想配列にパース
+    const question_type_data = JSON.parse(`{{ question_type|safe }}`);
+
+    // viewから送信されたDEBUG環境であるかどうかの情報を格納
+    const is_debug = "{{ is_debug }}" === "True";
+
+    // 設定ファイルをインポートしていた場合、JSON形式で送信されてくるので受け取る
+    {% if setting_data %}
+      const has_setting_data = true;
+      const setting_data = JSON.parse(preProcessNewLine(`{{ setting_data|safe }}`));
+    {% else %}
+      const has_setting_data = false;
+    {% endif %}
+  </script>
+  <script src="{% static 'make_enquete_setting/js/get_component.js' %}" type="text/javascript"
+          charset="UTF-8"></script>
+  <script src="{% static 'make_enquete_setting/js/index.js' %}" type="text/javascript"
+          charset="UTF-8"></script>
+{% endblock extra_js %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}" type="text/css"
+        charset="UTF-8">
+  <link rel="stylesheet" href="{% static 'make_enquete_setting/css/index.css' %}" type="text/css"
+        charset="UTF-8">
+{% endblock extra_css %}
+
+{% block content %}
+  <form id="enquete_setting_form" method="post" action="{% url 'make_enquete_setting:export' %}"
+        data-parsley-validate data-parsley-trigger="focus keyup focusout change"
+        data-parsley-excluded="[disabled=disabled]">
+    {% csrf_token %}
+    <!-- アンケート全体の一連の設定を行うフォーム -->
+    <!-- アンケート名 -->
+    <div class="form-group row">
+      <label for="enquete_title" class="col-md-3 col-form-label">
+        {% trans 'アンケート名' %}　<span class="badge badge-danger">{% trans '必須' %}</span>
+      </label>
+      <input type="text" id="enquete_title" name="enquete_title" class="form-control col-md-9"
+             placeholder="{% trans '保健室の利用に関するアンケート' %}" data-parsley-multiple-of=""
+             data-parsley-maxlength="{{ title_max_length }}" required>
+      <div class="invalid-feedback">{% trans 'アンケート名を入力してください' %}</div>
+    </div>
+    <!-- パスワードを使用するか -->
+    <div class="form-check">
+      <input type="hidden" id="enquete_has_password_hidden" class="enquete_has_password_hidden"
+             name="enquete_has_password" disabled="disabled">
+      <input class="form-check-input enquete_has_password" type="checkbox"
+             id="enquete_has_password" name="enquete_has_password" checked>
+      <label class="form-check-label" for="enquete_has_password">{% trans 'アンケートに共通パスワードを設定する' %}</label>
+    </div>
+    <!-- パスワード -->
+    <div class="form-group row">
+      <label for="enquete_password" class="col-md-3 col-form-label">
+        {% trans 'パスワード' %}　
+        <span class="badge badge-pill badge-warning" data-toggle="tooltip"
+              title="{% trans '共通パスワードを利用する場合必須' %}">?</span>
+      </label>
+      <!-- パスワードフォームが無効化時も値を送信するためのhiddenフォーム -->
+      <input type="hidden" id="enquete_password_hidden" name="enquete_password">
+      <input type="password" id="enquete_password" class="form-control col-md-9"
+             data-parsley-minlength="{{ password_min_length }}" data-parsley-maxlength="{{ password_max_length }}"
+             aria-describedby="password-help" required>
+      <small class="form-text text-muted" id="password-help">
+        {% blocktrans %}パスワードは{{ password_min_length }}~{{ password_max_length }}文字で入力してください。{% endblocktrans %}
+      </small>
+    </div>
+    <!-- パスワード（確認） -->
+    <div class="form-group row">
+      <label for="enquete_password_check" class="col-md-3 col-form-label">{% trans 'パスワード（確認）' %}</label>
+      <input type="password" id="enquete_password_check" name="enquete_password_check"
+             class="form-control col-md-9" data-parsley-equalto="#enquete_password"
+             data-parsley-equalto-message="{% trans 'パスワードが間違っています' %}">
+    </div>
+    <!-- 公開開始日 -->
+    <div class="form-group row">
+      <label for="enquete_published_at" class="col-md-3 col-form-label">
+        {% trans '公開開始日' %}　<span class="badge badge-danger">{% trans '必須' %}</span>
+      </label>
+      <input type="text" id="enquete_published_at" name="enquete_published_at" class="form-control col-md-9"
+             placeholder="2019/01/01 00:00" data-parsley-is-datetime="" required>
+    </div>
+    <!-- 回答期限日 -->
+    <div class="form-group row">
+      <label for="enquete_expired_at" class="col-md-3 col-form-label">
+        {% trans '回答期限日' %}　<span class="badge badge-info">{% trans '任意' %}</span>
+      </label>
+      <input type="text" id="enquete_expired_at" name="enquete_expired_at" class="form-control col-md-9"
+             placeholder="2030/01/01 00:00" data-parsley-is-datetime="" data-parsley-is-expire-after-publish="">
+    </div>
+    <!-- 公開終了日 -->
+    <!-- 現在公開終了日のデータは利用しないので非表示にしておく
+    <div class="form-group row">
+      <label for="enquete_finished_at" class="col-md-3 col-form-label">公開終了日:</label>
+      <input type="text" id="enquete_finished_at" name="enquete_finished_at" class="form-control col-md-9"
+             placeholder="2030/01/01 00:00">
+    </div>
+    -->
+    <!-- 利用規約 -->
+    <div class="form-group">
+      <label for="term_of_service">
+        {% trans '利用規約' %}　<span class="badge badge-danger">{% trans '必須' %}</span>
+      </label>
+      <textarea id="term_of_service" class="form-control" name="term_of_service"
+                placeholder=""
+                required>{% blocktrans %}- 本調査は、〇〇大学の△△調査として、□□の検証を目的として実施されます。
+- 本調査で収集されたデータは、個人情報を含まないかたちで、学会発表、論文やリポジトリへの掲載をする可能性があります。
+- 提出されたデータは、第三者機関に、匿名化されたデータセットとして提供される可能性があります。ただし、提出された文章データ中の個人情報については、匿名化されません。{% endblocktrans %}</textarea>
+    </div>
+
+    <div id="question-list-container"></div>
+
+    <!-- 質問の追加ボタン -->
+    <div align="center">
+      <button class="add-question-button btn btn-secondary align-items-center" type="button">
+        {% trans '質問を追加' %}
+      </button>
+    </div>
+
+    <!-- zipファイルのパスワード -->
+    <div class="form-group row" id="zip_password_form">
+      <label for="zip_password" class="col-md-3 col-form-label">{% trans '設定ファイル用パスワード' %}:</label>
+      <input type="password" id="zip_password" name="zip_password" class="form-control col-md-9" value="">
+    </div>
+
+    <!-- アンケート設定を送信して設定ファイルを生成するボタン -->
+    <button class="btn btn-primary" type="submit">{% trans '設定ファイルの生成' %}</button>
+  </form>
+{% endblock %}

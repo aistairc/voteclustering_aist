@@ -1,0 +1,51 @@
+[enquete]
+id {label:"INT"}
+title {label:"VARCHAR(255)"}
+has_password {label:"TINYINT(1)"}
+password {label:"VARCHAR(128)"}
+unique_url {label:"VARCHAR(10)"}
+access_token {label:"VARCHAR(40)"}
+published_at {label:"DATETIME"}
+expired_at {label:"DATETIME"}
+finished_at {label:"DATETIME"}
+term_of_service {label:"LONGTEXT"}
+
+[question]
+id {label:"INT"}
+enquete_id {label:"INT"}
+type {label:"VARCHAR(40)"}
+text {label:"LONGTEXT"}
+is_skip_allowed {label:"TINYINT(1)"}
+min_like_required {label:"INT"}
+example_answer {label:"LONGTEXT"}
+with_answered_num {label:"TINYINT(1)"}
+without_select {label:"TINYINT(1)"}
+is_result_public {label:"TINYINT(1)"}
+
+[choice]
+id {label:"INT"}
+question_id {label:"INT"}
+text {label:"LONGTEXT"}
+timestamp {label:"DATETIME"}
+
+[respondent]
+id {label:"INT"}
+enquete_id {label:"INT"}
+attribute {label:"VARCHAR(255)"}
+startTime {label:"DATETIME"}
+finishTime {label:"DATETIME"}
+hashedIpAddress {label:"VARCHAR(130)"}
+
+[evaluation]
+id {label:"INT"}
+respondent_id {label:"INT"}
+choice_id {label:"INT"}
+like {label:"INT"}
+assessment {label:"VARCHAR(40)"}
+timestamp {label:"DATETIME"}
+
+enquete 1--* question
+enquete 1--* respondent
+respondent 1--* evaluation
+question 1--* choice
+choice 1--* evaluation

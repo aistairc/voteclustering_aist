@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+{% extends 'dashboard/common/layout.html' %}
+{% load static smooth_timedelta %}
+{% block content %}
+  {% load i18n %}
+  <script src="{% static 'dashboard/js/libraries/moment.min.js' %}"></script>
+  <!-- <link rel="stylesheet" href="{% static 'HierarchicalEdgeBundling/hierarchical.css' %}"> -->
+  {% include 'dashboard/common/header.html' %}
+  {% include 'dashboard/common/sidebar.html' %}
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>{% trans 'ユーザ一覧' %}</h1>
+      <ol class="breadcrumb">
+        <li><a href="{% url 'index' %}"><i class="fa fa-tachometer-alt"></i>{% trans 'ホーム' %}</a></li>
+        <li class="active">{% trans 'ユーザ一覧' %}</li>
+      </ol>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+      <button onclick="location.href='{% url 'download_csv' %}'" type="button" style="margin: 10px"
+              class="btn btn-primary">{% trans 'エクスポート' %}</button>
+      <div class="box">
+        <table class="table table-hover">
+          <thead class="thead-dark">
+            <th>{% trans 'ID' %}</th>
+            <th>{% trans '回答者情報' %}</th>
+            <th>{% trans '回答者IPアドレス' %}</th>
+            <th>{% trans '回答回数' %}</th>
+            <th>{% trans '選択肢回答' %}</th>
+            <th>{% trans '自由記述回答' %}</th>
+            <th>{% trans '開始時刻' %}</th>
+            <th>{% trans '回答に要した時間' %}</th>
+            <!-- <th>{% trans 'IPアドレス' %}</th> -->
+          </thead>
+          <tbody>
+            {% for user_row in page_obj %}
+              <tr>
+                <td>{{ user_row.respondent_id }}</td>
+                <td>{{ user_row.attribute }}</td>
+                <td>{{ user_row.ip_address_id }}</td>
+                <td>{{ user_row.num_ip }}</td>
+                <td>{{ user_row.choice_eval|join:"<br />" }}</td>
+                <td>{{ user_row.open_end_eval|join:"<br />" }}</td>
+                <td>{{ user_row.start_time }}</td>
+                <td>{{ user_row.required_time|smooth_timedelta }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <ul class="pagination">
+        <!-- 前へ の部分 -->
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        {% endif %}
+    
+        <!-- 数字の部分 -->
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active"><a class="page-link" href="#!">{{ num }}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+    
+        <!-- 次へ の部分 -->
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+    
+    </section>
+  </div>
+  {% include 'dashboard/common/footer.html' %}
+{% endblock %}

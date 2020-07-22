@@ -1,0 +1,117 @@
+.popup {
+    @include position-fixed(0, 0, 0, 0, 100%, 100%);
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 90px 30px 30px;
+
+    display: none;
+    opacity: 0.0;
+    z-index: 999;
+}
+
+.popup_show {
+    @include display-flex(row, center, center);
+    opacity: 1.0;
+
+    @include animation(fadeIn, .1s);
+}
+
+.popup-balloon {
+    width: 100%;
+    height: 100%;
+    max-width: 920px;
+    border-radius: 10px;
+    background-color: #FFF;
+    position: relative;
+
+    @include for-small {
+        border-radius: 5px;
+        padding: 20px;
+    }
+}
+
+.popup-scroller {
+    @include display-flex(column, center, center);
+    -webkit-overflow-scrolling: touch;
+
+    @include for-small {
+        @include position-absolute(15px, 15px, 15px, 15px, auto, auto);
+        @include display-flex(column, flex-start, center);
+        padding: 15px;
+        overflow: auto;
+        border: 1px #BCBCBC solid;
+    }
+}
+
+.popup-close {
+    @include position-absolute(-22px, -22px, auto, auto);
+    cursor: pointer;
+}
+
+
+/* 投稿方法ポップアップ */
+.popup-header-band {
+
+    @include for-non-small {
+        @include position-absolute(36px, -25px, auto, -25px, auto, 90px);
+        @include display-flex(row, flex-start, center);
+        background-color: rgb(223, 230, 24);
+
+        &:before, &:after {
+            content: '';
+            display: block;
+            box-sizing: border-box;
+            @include position-absolute(90px, auto, auto, 0, 25px, 25px);
+            border-top: 12.5px #000 solid;
+            border-right: 12.5px #000 solid;
+            border-left: 12.5px rgba(0, 0, 0, 0) solid;
+            border-bottom: 12.5px rgba(0, 0, 0, 0) solid;
+        }
+
+        &:after {
+            @include position-absolute(90px, 0, auto, auto, 25px, 25px);
+            border-right: 12.5px rgba(0, 0, 0, 0) solid;
+            border-left: 12.5px #000 solid;
+        }
+    }
+
+    .popup-header-help {
+        width: 19px;
+        height: 100%;
+        background-image: url(../image/guide/help_light.svg);
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin-left: 34px;
+    }
+
+    h2 {
+        display: inline-block;
+        font-size: 22px;
+        margin: 0 27px 0 12.5px;
+    }
+
+    @include for-small {
+        flex: 1 0 auto;
+
+        .popup-header-help {
+            display: inline-block;
+            vertical-align: top;
+            height: 48px;
+            background-image: url(../image/guide/help_normal.svg);
+            margin-left: 0px;
+        }
+
+        h2 {
+            vertical-align: top;
+            display: inline-block;
+            font-size: 28px;
+            line-height: 50px;
+        }
+
+        p {
+            display: none;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+    }
+}

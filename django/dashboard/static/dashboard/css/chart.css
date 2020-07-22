@@ -1,0 +1,89 @@
+.line_chart {
+    margin: 0 auto;
+}
+.tab-container {
+    padding: 30px;
+}
+.charts_content {
+    width: 100%;
+}
+#choce_boxes ul:after {
+    content: "";
+    clear: both;
+    display: block;
+}
+#choce_boxes ul li {
+    padding: 20px;
+    display: block;
+    float: left;
+    /* height: 100px; */
+    list-style-type: none;
+    border: #bfbfbf solid 1px;
+    margin: 5px;
+    text-align: center;
+    width: 48%;
+}
+.questions-list ul li {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+}
+.date-box {
+    border-radius: 5px;
+    background-color: #bfbfbf;
+    text-align: center;
+    width: 65px;
+    height: 50px;
+}
+.day-text {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 30px;
+    height: 30px;
+    line-height: 25px;
+}
+.month-text {
+    color: #ffffff;
+    font-size: 6px;
+    margin-bottom: 0;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 0;
+}
+.choice-box {
+    /*height: 50px;*/
+    display: flex;
+    margin: 5px;
+}
+.choice-text {
+    /*height: 25px;*/
+    line-height: 25px;
+    font-size: 18px;
+}
+.date-text {
+    /*height: 15px;*/
+    padding-top: 5px;
+    width: 100%;
+    color: #bfbfbf;
+    margin-left: 15px;
+    font-size: 8px;
+    text-align: left;
+}
+
+/* 320px〜768px
+------------------------------ */
+@media screen and (min-width:320px) and (max-width:768px) {
+    .tab-container {
+        padding: 0;
+    }
+    #choce_boxes ul li {
+        padding: 5px;
+        width: 100%;
+    }
+    .choice-text {
+        font-size: 12px;
+    }
+    #choices {
+        padding-left: 0;
+    }
+}

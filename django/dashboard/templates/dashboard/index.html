@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% extends 'dashboard/common/layout.html' %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+  {% include 'dashboard/common/header.html' %}
+  {% include 'dashboard/common/sidebar.html' %}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        {{ enquete.title }}
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-tachometer-alt"></i>{% trans 'ホーム' %}</a></li>
+        <li class="active">{% trans 'ダッシュボード' %}</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
+        <div class="col-lg-4 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3 id="respondent_count">
+                {{ respondent_num }}
+              </h3>
+              <p>{% trans '総回答者数' %}</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person"></i>
+            </div>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3 id="respondent_today">
+                {{ today_respondents_num }}
+              </h3>
+              <p>{% trans '本日の回答者数' %}</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3 id="expired_count">
+                {{ remaining_days }}
+              </h3>
+              <p>{% trans 'アンケート実施残り日数' %}</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-calendar"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.row -->
+      <!-- Main row -->
+      <div class="row">
+        <!-- Left col -->
+        <section class="col-lg-12 connectedSortable">
+          <!-- Custom tabs (Charts with tabs)-->
+              {% include 'dashboard/charts/line_chart.html' %}
+                <div class=" box box-success">
+                  {% include 'dashboard/charts/choice_chart.html' %}
+                </div>
+        </section>
+        <!-- /.Left col -->
+      </div>
+      <!-- /.row (main row) -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  {% include 'dashboard/common/footer.html' %}
+<!-- ./wrapper -->
+{% endblock %}

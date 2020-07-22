@@ -1,0 +1,115 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-03 18:54+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "最もLikeされた回答Top5"
+msgstr "Top 5 most liked"
+
+msgid "最近の自由記述回答5件"
+msgstr "5 recent open-ended answer"
+
+msgid "回答者数推移"
+msgstr "Number of respondents"
+
+msgid "メインメニュー"
+msgstr "Main menu"
+
+msgid "ホーム"
+msgstr "Home"
+
+msgid "ユーザ一覧"
+msgstr "User list"
+
+msgid "HierarchicalEdgeBundling"
+msgstr ""
+
+msgid "ダッシュボード"
+msgstr "Dashboard"
+
+msgid "総回答者数"
+msgstr "Total number of respondents"
+
+msgid "本日の回答者数"
+msgstr "Number of respondents today"
+
+msgid "アンケート実施残り日数"
+msgstr "Remaining days"
+
+msgid "アクセストークンが入力されていません"
+msgstr "Missing access token."
+
+msgid "アクセストークンに一致するアンケートが<br>存在しません"
+msgstr "No survey corresponds to the access token."
+
+msgid "ログインしてください"
+msgstr "Please log in"
+
+msgid "アクセストークン"
+msgstr "Access token"
+
+msgid "ログイン"
+msgstr "Log in"
+
+msgid "NetworkPlot"
+msgstr ""
+
+msgid "Sankey-diagram"
+msgstr ""
+
+msgid "sankey-diagram"
+msgstr ""
+
+msgid "回答集計結果"
+msgstr ""
+
+msgid "保存"
+msgstr "Save"
+
+msgid "sunburst"
+msgstr ""
+
+msgid "エクスポート"
+msgstr "Export"
+
+msgid "ID"
+msgstr ""
+
+msgid "回答者情報"
+msgstr "Attribute"
+
+msgid "回答者IPアドレス"
+msgstr "IP address"
+
+msgid "回答回数"
+msgstr "Number of responses"
+
+msgid "選択肢回答"
+msgstr "Multiple-choice responses"
+
+msgid "自由記述回答"
+msgstr "Open-ended responses"
+
+msgid "開始時刻"
+msgstr "Starting time"
+
+msgid "回答に要した時間"
+msgstr "Duration"
+
+msgid "IPアドレス"
+msgstr "IP address"

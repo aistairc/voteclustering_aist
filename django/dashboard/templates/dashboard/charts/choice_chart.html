@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<div class="charts_content">
+  <link rel="stylesheet" href="{% static 'dashboard/css/chart.css' %}">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+  <script src="{% static 'dashboard/js/libraries/moment.min.js' %}"></script>
+  <script src="{% static 'dashboard/js/libraries/d3.v5.min.js' %}"></script>
+  <div class="box-header">
+    <div  id="choce_boxes">
+      <ul id="choices"></ul>
+    </div>
+  </div>
+  <div id="like_tabtitle" hidden>{% trans '最もLikeされた回答Top5' %}</div>
+  <div id="current_tabtitle" hidden>{% trans '最近の自由記述回答5件' %}</div>
+  {{ question_graph_data | json_script:"question_graph_data" }}
+  <script type="text/javascript" src="{% static 'dashboard/js/choice_chart.js' %}"></script>
+</div>

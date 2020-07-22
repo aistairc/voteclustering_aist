@@ -1,0 +1,649 @@
+{% load static compress i18n %}
+{% load render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>VOTECLUSTERING - 投票クラスタリング</title>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="assets/img/favicon.png">
+
+  {% block extra_js %}
+    <!--<script src="bundle.js"></script>-->
+    {% render_bundle 'voteclustering/index' %}
+  {% endblock extra_js %}
+
+  <script>
+      // CSRF対策のための処理
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = $.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+
+      function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+      }
+
+      $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            const csrftoken = getCookie('csrftoken');
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      });
+
+      // JSON文字列内に含まれる改行をパース可能な形式に変換
+      const preProcessNewLine = (inputStr) => {
+        return inputStr.replace(/\r?\n/g, '\\n')
+      };
+
+      // 選択肢のリストのキー名をJS側で定義された名称にパース
+      const convertChoices = (inputChoices) => {
+        return inputChoices.map((element) => {
+          const newElement = {};
+          $.each(element, (key, value) => {
+            switch (key) {
+              case "id":
+                newElement['key'] = value;
+                break;
+              case "text":
+                newElement['label'] = value;
+                break;
+              default:
+                newElement[key] = value;
+                break;
+            }
+          });
+          return newElement;
+        })
+      };
+
+      // 質問のリストのキー名をJS側で定義された名称にパース
+      const convertQuestionList = (inputQuestions) => {
+        return inputQuestions.map((element) => {
+          const newElement = {};
+          $.each(element, function (key, value) {
+            switch (key) {
+              case "id":
+                newElement['key'] = value;
+                break;
+              case "text":
+                newElement['question'] = value;
+                break;
+              case "example_answer":
+                newElement['placeholder'] = value;
+                break;
+              case "is_skip_allowed":
+                newElement['skippable'] = value;
+                break;
+              case "choices":
+                newElement['choices'] = convertChoices(value);
+                break;
+              default:
+                newElement[key] = value;
+            }
+          });
+          return newElement;
+        });
+        // return newQuestionList;
+      };
+
+      const strToBoolean = (str_input) => {
+        return str_input.toLowerCase() === 'true';
+      };
+
+      const othersChoiceSize = 8; // 他の人の意見を取得する際に一度に表示する意見の数
+      const othersChoiceMax = 24; // 他の人の意見の最大可能取得数
+      let choices_cache;
+      let question_id;
+
+      const is_debug = "{{ is_debug }}" === "True";
+      const questions = JSON.parse(preProcessNewLine(`{{ questions|safe }}`));
+      // キー名のパースを前処理として行う
+      const questionList = convertQuestionList(questions);
+
+      // VoteClustering初期化
+      var voteClusteringOptions = {
+        enqueteTitle: "{{ enquete.title }}",
+        oneOpinionCautionEvery: true,   // 既定値未満しか意見を選択していない警告を設問毎に出すか(falseは1回きり)
+        defaultMinLikeRequired: 0,      // 上記意見選択数警告を表示する件数の閾値
+        hasPassword: strToBoolean("{{ enquete.has_password }}"), // パスワードの入力が必要かどうか
+
+        selfOpinion: {
+          lengthCautionThreshold: 100,  // 何文字以上入力したら警告を表示するか
+          maxLength: 300,               // 最大文字数
+          suggestInterval: 300,         // サジェスト一覧取得用のコールバックが呼ばれるまでのインターバル
+        },
+
+        openState: '',          // アンケート開始前(before)/アンケート終了後(after)/開催中の場合はその他
+
+        language: 'ja', // 'en'
+        languages: {
+          top: {
+            passwordError: 'パスワードが正しくありません。',
+            beforeMessage: '現在アンケート開始前です',
+            afterMessage: '本アンケートは<br>すでに終了しています',
+          },
+
+          tutorial: {
+            helpButton: '使い方の説明',
+            menuButton: '入力した回答を\n再編集できます',
+          },
+
+          guidePopup: {
+            title: '投稿方法',
+            point1: 'みんなの意見のなかで、あなたと同じ意見や近い意見をすべて選んでください。',
+            point2: 'オリジナルの意見もある人は、自由記述欄に書き込んでください。',
+            likeTitle: '「いいね」する',
+            likeText:      'みんなの意見のなかで、<br>あなたと同じ意見や近い意見を<br>すべて選んでください。',
+            likeTextForSP: 'みんなの意見のなかで、あなたと同じ意見や近い意見をすべて選んでください。',
+            writeTitle: '自分の意見を書く',
+            writeText:      'オリジナルの意見もある人は、<br>自由記述欄に書き込んでください。',
+            writeTextForSP: 'オリジナルの意見もある人は、自由記述欄に書き込んでください。',
+          },
+
+          question: {
+            moreOpinion: 'みんなの意見をもっとみる',
+            opinionLoading: '読み込み中',
+
+            selfOpinion: {
+              label: "投稿",
+              cancelButton: "キャンセル",
+              addButton: "追加する",
+              delete: "投稿を削除する",
+              deleteCancel: "キャンセル",
+              multiPoint: "※回答は複数投稿可能です。ポイントごとに分けて投稿してください。",
+              suggest: "回答候補",
+            },
+
+            longtext: {
+              placeholder: "自由記入欄です。",
+              description: "自由記入欄に回答を記入してください",
+            },
+
+            question: {
+              placeholder: "近い意見がない場合は記入してください",
+              description: "同じ意見・十分近い意見には <strong>すべて</strong>に「いいね」してください"
+            },
+
+            likeNum: "いいね! *N*人",
+            answeredNum: "*N*人が回答",
+
+            next: 'NEXT',
+            nextLast: '送信する',
+            sendFailed: "送信に失敗しました。",
+
+            toTopConfirm: {
+              text: '回答結果を破棄して<br>アンケートを終了しますか？',
+              cancel: 'アンケートを続ける',
+              ok: '終了する',
+            },
+
+            minLikeConfirm: {
+              point1: '本当にいいねは*N*つのみで<br>よろしいでしょうか？',
+              point2: '目安は*N*つ以上です。',
+            },
+
+            tos: {
+              title: 'アンケートは以上です。',
+              agree: '<span class="link-tos">利用規約</span>に同意する',
+              menu: '利用規約',
+              body: '{% trans '利用規約（前半）' %} <ul> {% for line in term_of_service %} <li>{{ line }}</li> {% endfor %} </ul> {% trans '利用規約（後半）' %}',
+            },
+            //tosBody: '利用規約（前半）' + '<ul><li>各行</li></ul>' + '利用規約（後半）',
+
+            thanks: {
+              text: "ご回答ありがとうございました！",
+              back: 'HOMEへ',
+            }
+          },
+
+          // send: "送信する",
+          // thanks: "ご回答ありがとうございました！",
+        },
+
+        /**
+         * 設問一覧
+         * key: 設問ID(nullや省略すると回答が記録されません。)
+         * question: 設問本文
+         * type: 設問種別。question / singletext / single / multi のいずれかを指定する。
+         *       question - みんなの回答から選択、もしくは記述する基本的な設問の形。
+         *       singletext - 1行入力の設問。
+         *       single - 単一選択の設問(ボタン型)。
+         *       multi - 複数選択の設問(ボタン型)。
+         * placeholder: typeがsingletextの場合に表示されるプレースホルダー。
+         * choices: typeがsingle / multiの場合に必要な選択肢の一覧。
+         *     key: プログラム上やDB上での値。
+         *     label: 表示上のラベル。省略するとキーと同じ値を使用する。
+         *     answered_num: 回答数を表示する際に使用する値。
+         * with_answered_num: 回答数を表示する場合、trueを指定する(デフォルト: false)。
+         * skippable: スキップ不可とする場合、falseを指定する(デフォルト: true)。
+         * without_select: typeがquestionの際、選択肢を出さない(デフォルト: false)。
+         * min_like_required: typeがquestionの際、選択意見数が少なすぎる警告を表示する閾値(デフォルト: init時のdefaultMinLikeRequired)
+         * non_menu: メニューの設問一覧に出さない(デフォルト: false)。
+         */
+        questionList: questionList/*[
+          { key: 'id',             question: '[userid]',           type: 'userid',     placeholder: '例：1234abc', skippable: false },
+          { key: 'singletext',     question: '[singletext]',       type: 'singletext', placeholder: '例：1234abc' },
+          { key: 'longtext',       question: '[longtext]',         type: 'longtext' },
+          { key: 'longtext-multi', question: '[longtext-multi]',   type: 'longtext-multi' },
+          {
+            key: 'single', question: '[single]', type: 'single',
+            choices: [
+              { key: 1, label: 's1', answered_num: 13 },
+              { key: 2, label: 's2', answered_num: 23 },
+              { key: 3, label: 's3', answered_num: 33 },
+              { key: 4, label: 's4', answered_num: 33 },
+              { key: 5, label: 's5', answered_num: 33 },
+              { key: 6, label: 's6', answered_num: 33 },
+              { key: 7, label: 's7', answered_num: 33 },
+              { key: 8, label: 's8', answered_num: 33 },
+              { key: 9, label: 's9', answered_num: 33 },
+            ],
+          },
+          {
+            key: 'multi', question: '[multi]', type: 'multi',
+            choices: [
+              { key: 1, label: 'm1', answered_num: 13 },
+              { key: 2, label: 'm2', answered_num: 23 },
+              { key: 3, label: 'm3', answered_num: 33 },
+              { key: 4, label: 'm4', answered_num: 33 },
+              { key: 5, label: 'm5', answered_num: 33 },
+            ],
+          },
+          {
+            key: 'question',
+            question: '[question]',
+            type: 'question',
+            min_like_required: 3,
+          },
+
+        ]*/,
+        /*
+        questionList: [
+          {
+            key: 'id',
+            question: 'IDを入力してください',
+            type: 'userid',
+            placeholder: '例：1234abc',
+            skippable: false,
+          },
+          {
+            key: 'gender',
+            question: '性別は？',
+            type: 'multi',
+            choices: [
+              { key: 1, label: '男性',    answered_num: 13 },
+              { key: 2, label: '女性',    answered_num: 23 },
+              { key: 3, label: '答えたくない', answered_num: 33 },
+            ],
+          },
+          {
+            key: 'undergraduate',
+            question: '学部・研究科は？',
+            type: 'single',
+            choices: [
+              { key:  1, label: '国際教養'},  { key:  2, label: '文学'},  { key: 3, label: '法政経'},
+              { key:  4, label: '教育'},      { key:  5, label: '理学'},  { key: 6, label: '工学'},
+              { key:  7, label: '看護'},      { key:  8, label: '薬学'},  { key: 9, label: '医学'},
+              { key: 11, label: '園芸'},      { key: 99, label: 'その他'},
+            ],
+          },
+          // {
+          //   key: 'grade',
+          //   question: '学年は？',
+          //   type: 'single',
+          //   choices: [
+          //     { key:  1, label: '1年'},  { key:  2, label: '2年'},  { key:  3, label: '3年'},
+          //     { key:  4, label: '4年'},  { key:  5, label: '5年'},  { key:  6, label: '6年'},
+          //     { key:  7, label: '修士'}, { key:  8, label: '博士'}, { key: 99, label: 'その他'},
+          //   ],
+          // },
+          // {
+          //   key: 'use',
+          //   question: '保健管理施設を健康診断以外で利用したことはありますか？',
+          //   type: 'single',
+          //   choices: [
+          //     { key:  1, label: 'はい', answered_num: 23}, { key:  0, label: 'いいえ', answered_num: 13},
+          //   ],
+          //   with_answered_num: true,
+          // },
+          {
+            key: 'use_reason',
+            question: '「はい」と答えた方は、差し支えなければ、その内容を教えてください。',
+            type: 'question',
+            without_select: true,
+            min_like_required: 2,
+          },
+          {
+            key: 'reason',
+            question: '保健室を利用した理由・利用しない理由を書いてください。',
+            type: 'question',
+            min_like_required: 3,
+          },
+          // {
+          //   key: 'checkup',
+          //   question: '前回の定期健康診断を受診しましたか？',
+          //   type: 'single',
+          //   choices: [
+          //     { key:  1, label: 'はい', answered_num: 23}, { key:  0, label: 'いいえ', answered_num: 13},
+          //   ],
+          //   with_answered_num: true,
+          // },
+          // {
+          //   key: 'checkup_reason',
+          //   question: '健康診断を受診した・しない理由を書いてください。',
+          //   type: 'question',
+          // },
+          // {
+          //   key: 'checkup_reason2',
+          //   question: '健康診断を受診した・しない理由を書いてください。',
+          //   type: 'question',
+          // },
+          // {
+          //   key: 'checkup_reason3',
+          //   question: '健康診断を受診した・しない理由を書いてください。',
+          //   type: 'question',
+          // },
+          // {
+          //   key: 'checkup_risk',
+          //   question: '今までの学生定期健康診断では、糖尿病、慢性腎炎、肺結核、気胸などの病気が判明した学生さんがいます。健康診断を受けなかった場合、自分自身にどのようなリスクが生じると考えるか、書いてください。',
+          //   type: 'question',
+          //   min_like_required: 3,
+          // },
+        ],
+        */
+
+        /**
+         * ログイン時処理
+         * @param  {String} password 入力されたパスワード
+         * @return {jQuery.Promise}
+         */
+        loginFunction: function(password) {
+          var d = $.Deferred(); // [必須]消さないでください
+
+          // ajax等による判定処理をここに記述してください
+          $.ajax({
+            'url': '{% url "AIST_survey:check_password" %}',
+            'type': 'POST',
+            'data': {
+              'password': password,
+              'enquete_id': "{{ enquete.id }}"
+            },
+            'dataType': 'json'
+          }).done(response => {
+            if (response.result === true) {
+              d.resolve(false);
+            } else {
+              d.reject('パスワードが正しくありません。');
+            }
+          });
+          // ※setTimeoutは時間がかかる処理のサンプルなので実装時は不要です
+          /*if(password != null && password !== "") {
+            setTimeout(function() {
+              if(true) {
+                // [必須]ログイン成功時はこのメソッドを呼び出してください
+                // (true/falseは投稿方法ポップアップを表示するかしないかです。初回かどうかなどで切り分けてください。)
+                d.resolve(false); 
+                          
+              } else {
+                // [必須]失敗時はこのメソッドを呼び出してください
+                d.reject('パスワードが正しくありません。');
+              }
+            }, 500);
+          } else {
+            d.reject('パスワードを入力してください。');
+          }*/
+
+          return d.promise(); // [必須]消さないでください
+        },
+
+        /**
+         * 回答結果バリデーションチェック(自由入力の項目について、DBのカラム長等に応じて作成してください)
+         * resolveでエラー内容の配列(エラーが存在しない場合は空の配列を返してください)
+         * @param  {Object} question 設問のデータ(上記questionListで定義した設問の1つ)
+         * @param  {Any} answer
+         *         回答結果(設問タイプにより型が異なるため注意)
+         *         single/singletext: Any (選択されたkeyや入力値)
+         *         multi/checkbox:    [Any] (選択されたkeyの配列)
+         *         question:          {list: [Any], free: String} (選択されたkeyの配列、自由入力値)
+         * @return {jQuery.Promise}
+         */
+        validationCheck: function(question, answer) {
+          var d = $.Deferred(); // [必須]消さないでください
+
+          // JSで入力値チェックを行ったり、サーバーサイドにデータを送信した際の戻り値等を使用してください
+          var error_list = [];
+
+          // 例) ID入力の設問は半角英数のみとする
+          /*if(question.key === 'id') {
+            if(answer.match(/[^A-Za-z0-9]/)) {
+              error_list.push('半角英数字で入力してください。');
+            }
+          }*/
+
+          // 入力の文字数が受付可能なサイズであることを確認
+          if (question.type === 'singletext') {
+            if (answer.length > {{ respondent_attribute_max_length }}) {
+              error_list.push(`IDは{{ respondent_attribute_max_length }}文字以内で入力してください。`);
+            }
+          } else if (question.type === 'question') {
+            if (answer.free.length > {{ choice_text_max_length }}) {
+              error_list.push('意見は{{ choice_text_max_length }}文字以内で入力してください。');
+            }
+          }
+
+          if(error_list.length == 0) {
+            d.resolve();  // [必須] 成功時はresolveメソッドを呼び出してください
+          } else {
+            d.reject(error_list); // [必須] エラーがある場合はそのリストをrejectメソッドで返してください
+          }
+
+          return d.promise(); // [必須]消さないでください
+        },
+
+        /**
+         * 設問表示時処理
+         * @param  {Object} question 次に出題される設問のデータ(上記questionListで定義した設問の1つ)
+         * @return {jQuery.Promise}
+         */
+        nextQuestion: function(question) {
+          var d = $.Deferred(); // [必須]消さないでください
+
+          // 必要に応じてquestionの内容を書き換えてからd.resolveを呼び出してください
+          // ※例えば回答数を常にその時最新のものを表示したい場合等はここで更新
+          d.resolve(question);
+
+          return d.promise(); // [必須]消さないでください
+        },
+
+        /**
+         * 選択肢一覧の取得
+         * ※8個ずつ取得してほしいとのことです(デザイナー様指定)
+         * @param  {Object} question    現在の設問
+         * @param  {[Any]}  loaded_keys ここまでに読み込まれた選択肢のkeyの配列(サジェスト抜き)
+         * @param  {[Any]}  suggest_keys サジェスト分のみの読み込まれた選択肢のkeyの配列
+         * @return {jQuery.Promise}
+         */
+        loadOpinion: function(question, loaded_keys, suggest_keys) {
+          var d = $.Deferred(); // [必須]消さないでください
+
+          // ajax等で問い合わせた後、下記形式で返却してください。
+          // list: 選択肢の配列
+          //   key: DB上のキー
+          //   text: 選択肢
+          //   num: いいね!された回数
+          // more: まだ続きがあるかどうか(「もっと見る」ボタンの表示切り替えに使用します)
+          if (question_id !== question.key) {
+            choices_cache = undefined;
+            question_id = question.key;
+          }
+          if (typeof choices_cache == 'undefined') {
+            // 選択肢のリストがキャッシュされていない場合、ajaxで選択肢のリストを取得する。
+            $.ajax({
+              'url': '{% url "AIST_survey:get_others_opinion" %}',
+              'type': 'POST',
+              'data': {
+                'question_id': question.key,
+                'choice_size': othersChoiceMax
+              },
+              'dataType': 'json'
+            }).done(response => {
+              choices_cache = response.opinion_list;
+              d.resolve({
+                list: choices_cache.slice(0, Math.min(othersChoiceSize, choices_cache.length)),
+                // 取得した選択肢リストのすべてを表示しきっていた場合false
+                more: choices_cache.length > othersChoiceSize,
+              })
+            });
+          } else {
+            // 選択肢のリストがキャッシュ済みの場合、キャッシュから選択肢を取得する。
+            const index = loaded_keys.length;
+            d.resolve({
+              list: choices_cache.slice(index, Math.min(index + othersChoiceSize, choices_cache.length)),
+              // 選択肢リストのすべてを表示するか、最大表示数のに達した場合false
+              more: choices_cache.length > index + othersChoiceSize && index + othersChoiceSize < othersChoiceMax,
+            })
+          }
+          /*setTimeout(function() {
+            var index = loaded_keys.length;
+            d.resolve({
+              list: [
+                { key: index + 1, text: "腹痛で利用", num: 3 },
+                { key: index + 2, text: "風邪の時に利用した", num: 8 },
+                { key: index + 3, text: "病院の推薦で利用した", num: 0 },
+                { key: index + 4, text: "吐き気がしたので、薬をもらいたかった＆休ませてもらいたかった", num: 9 },
+                { key: index + 5, text: "友人の付き添い", num: 1 },
+                { key: index + 6, text: "気分が悪くなったため", num: 3 },
+                { key: index + 7, text: "頭痛で利用", num: 0 },
+                { key: index + 8, text: "貧血で倒れたので、友人が運んでくれ、しばらく休ませてもらった", num: 12 },
+              ],
+              more: index < 16,
+            });
+          }, 500);*/
+
+          return d.promise(); // [必須]消さないでください
+        },
+
+        /**
+         * サジェスト一覧の取得
+         * @param  {Object} question     現在の設問
+         * @param  {[Any]}  loaded_keys  ここまでに読み込まれた選択肢のkeyの配列(サジェスト抜き)
+         * @param  {[Any]}  suggest_keys サジェスト分のみの読み込まれた選択肢のkeyの配列
+         * @param  {String} value        入力値
+         * @return {jQuery.Promise}
+         */
+        suggestList: function(question, loaded_keys, suggest_keys, value) {
+          var d = $.Deferred(); // [必須]消さないでください
+
+          // ajax等で問い合わせた後、下記形式で返却してください。
+          // 選択肢の配列
+          //   key: DB上のキー
+          //   text: 選択肢
+          //   num: いいね!された回数
+          setTimeout(function () {
+            $.ajax({
+              'url': '{% url "AIST_survey:suggest" %}',
+              'type': 'POST',
+              'data': {
+                'question_id': question.key,
+                'input_value': value,
+                'loaded_keys': JSON.stringify(loaded_keys),
+              },
+              'dataType': 'json'
+            }).done(response => {
+              d.resolve(response.suggested_choice);
+            });
+          }, 100);
+          /*setTimeout(function() {
+            if(value == "test") {
+              d.resolve([
+                { key: 100, text: "サジェストテスト1", num: 3 },
+                { key: 101, text: "サジェストテスト2", num: 8 },
+                { key: 102, text: "サジェストテスト3", num: 0 },
+              ]);
+            } else {
+              d.resolve([]);
+            }
+          }, 100);*/
+
+          return d.promise(); // [必須]消さないでください
+        },
+
+        /**
+         * アンケート終了イベント
+         * @param  [Object] send_data 送信するデータを格納した
+         * 
+         *         {
+         *           answer_list: [
+         *             key: {
+         *               key: 設問key,
+         *               type: 設問種別('single', 'userid', ...),
+         *               answer: 回答値(形式は種別により異なる)
+         *             }
+         *           ]
+         *           respondent_data: {
+         *             startTime: 回答の開始時間
+         *           }
+         *         }
+         *
+         *         【設問種別ごとの回答値】
+         *           single/singletext/longtext: 
+         *             Any 選択されたkeyや入力値
+         *           
+         *           multi/longtext-multi:
+         *             [Any] 選択されたkeyや入力値の配列
+         *           
+         *           question:
+         *             {list: [Any], free: [String]} 
+         *             選択されたkeyの配列、自由入力値の配列
+         *           
+         * @return {jQuery.Promise}
+         */
+        endEnquete: function(send_data) {
+          var d = $.Deferred(); // [必須]消さないでください
+
+          // answer_listの内容をDBに保存する処理等を記述してください
+          if (is_debug) console.log(send_data);
+          $.ajax({
+            'url': '{% url "AIST_survey:add_answer" %}',
+            'type': 'POST',
+            'data': {
+              'answer_list': JSON.stringify(send_data.answer_list),
+              'respondent_data': JSON.stringify(send_data.respondent_data),
+              'enquete_id': "{{ enquete.id }}"
+            },
+            'dataType': 'json'
+          }).done(response => {
+            d.resolve()
+          });
+          /*setTimeout(function() {
+            d.resolve();
+          }, 500);*/
+
+          return d.promise(); // [必須]消さないでください
+        }
+      };
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  nginx:
+    volumes:
+      - ./nginx/nginx.production.conf:/etc/nginx/nginx.conf

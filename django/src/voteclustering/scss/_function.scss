@@ -1,0 +1,76 @@
+@mixin for-small() {
+    @media screen and (max-width: 799px) {
+        @content;
+    }
+}
+
+@mixin for-non-small() {
+    @media screen and (min-width: 799px) {
+        @content;
+    }
+}
+
+@mixin for-large() {
+    @media screen and (min-width: 800px) {
+        @content;
+    }
+}
+
+
+@mixin display-flex($direction: column, $justifyContent: flex-start, $alignItems: center) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justifyContent;
+    align-items: $alignItems;
+}
+
+@mixin flex($shrink, $grow, $base) {
+    flex: $shrink $grow $base;
+}
+
+@mixin position-absolute($top: auto, $right: auto, $bottom: auto, $left: auto, $width: auto, $height: auto) {
+    @include position(absolute, $top, $right, $bottom, $left, $width, $height);
+}
+
+@mixin position-fixed($top: auto, $right: auto, $bottom: auto, $left: auto, $width: auto, $height: auto) {
+    @include position(fixed, $top, $right, $bottom, $left, $width, $height);
+}
+
+@mixin position($type: relative, $top: auto, $right: auto, $bottom: auto, $left: auto, $width: auto, $height: auto) {
+    position: $type;
+    top: $top;
+    right: $right;
+    bottom: $bottom;
+    left: $left;
+    width: $width;
+    height: $height;
+}
+
+@mixin placeholderColor($color) {
+    &:placeholder-shown {
+        color: $color;
+    }
+    &::-webkit-input-placeholder {
+        color: $color;
+    }
+    &:-moz-placeholder {
+        color: $color;
+        opacity: 1;
+    }
+    &::-moz-placeholder {
+        color: $color;
+        opacity: 1;
+    }
+    &:-ms-input-placeholder {
+        color: $color;
+    }
+}
+
+@mixin animation($animation-name, $duration: 0, $timing-function: ease, $delay: 0s, $iteration-count: 1, $direction: normal) {
+    -webkit-animation: $animation-name $duration $timing-function $delay $iteration-count $direction;
+    -moz-animation: $animation-name $duration $timing-function $delay $iteration-count $direction;
+    animation: $animation-name $duration $timing-function $delay $iteration-count $direction;
+    -webkit-animation-fill-mode: both;
+    -moz-animation-fill-mode: both;
+    animation-fill-mode: both;
+}

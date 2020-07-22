@@ -1,0 +1,10 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Import Setting File{% endblock %}
+{% block content %}
+{{ message }}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">インポート</button>
+</form>
+{% endblock %}

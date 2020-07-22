@@ -1,0 +1,81 @@
+FORMAT: 1A
+
+# Group Enquete
+
+## アンケート情報取得 [/api/enquete/{enquete_url}]
+
+### アンケート情報取得API [GET]
+URLで指定されたアンケートの質問や回答数の情報を返します。
+
++ Parameters
+    + enquete_url: abcde (string, required) - アンケートのunique ID。アンケートの回答ページの末尾と同一。
+
++ Response 200 (application/json)
+    + Attributes
+        + title: 朝食に関するアンケート (string, required)
+        + published_at: `2019-01-01T00:00:00+09:00` (string, required) - アンケートの開始時刻
+        + expired_at: `2019-12-31T00:00:00+09:00` (string) - アンケートの終了時刻
+        + has_password: true (boolean) - アンケートの回答にパスワードを要するか
+        + unique_rul: abcde (string, required) - アンケートのunique ID。アンケートの回答ページの末尾と同一。
+        + questions (required, array)
+            + (object)
+                + type: question (enum, required) - アンケートの種別
+                    + userid (string) - 職員番号などユーザーのIDを入力させる設問
+                    + single (string) - 選択肢から1つだけを選択させる設問
+                    + multi (string) - 選択肢から複数を選択させる設問
+                    + question (string) - 自由回答形式の設問
+                + text: 朝食は何を食べましたか？ (string, required) - アンケートの質問文
+                + is_result_public: true (boolean, required) - アンケートの回答結果をwebAPI等で取得可能にするか。
+                + is_skip_allowed: true (boolean, required) - アンケート回答時にこの設問をスキップ可能にするか
+                + example_answer: ハムエッグ (string) - 質問の回答例
+                + without_select: false (boolean, required) - 回答時に他者の回答を表示しないようにするか
+                + with_answered_num: true (boolean, required) - 回答時に各選択肢に対する回答者数を表示するか
+                + min_like_required: 3 (number, required) - 他者の回答を選択できる設問の場合に、指定した選択数未満の場合に警告を行う
+                + choices (array)
+                    + (object)
+                        + text: 目玉焼き (string, required) - 選択肢の文章
+                        + liked_num: 2 (number) - この選択肢にいいね！を選択した人数
+                        + presented_num: 4 (number) - この選択肢が表示された人数
+                        + disliked_num: 0 (number) - この選択肢に否定的な選択をした人数
+                        + proposed_num: 1 (number) - この選択肢を新規に提案した人数（デフォルトで入っている選択肢の場合0になる。）
+
+
+## アンケート回答 [/api/answer/{enquete_url}]
+
+### アンケート回答API [POST]
+
++ Parameters
+    + enquete_url: abcde (string, required) - アンケートのunique ID。アンケートの回答ページの末尾と同一。
+
++ Request (application/json)
+    + Attributes
+        + answer_data (required)
+            + *question_id*
+                + key: 100 (number)
+                + type: question (enum, required) - アンケートの種別
+                    + userid (string) - 職員番号などユーザーのIDを入力させる設問
+                    + single (string) - 選択肢から1つだけを選択させる設問
+                    + multi (string) - 選択肢から複数を選択させる設問
+                    + question (string) - 自由回答形式の設問
+                + answer (enum)
+                    + (object) - typeがquestionの場合
+                        + list (array)
+                            + (object)
+                                + key: 10 (number, required) - 表示された選択肢のID
+                                + isSelected (boolean, required) - keyの選択肢に回答者がいいねをしたか
+                        + free: 卵焼き (string) - 自由記述で記入された回答
+                    + (array) - typeがmultiの場合 選択した選択肢のIDのリスト
+                        + 10
+                        + 20
+                    + member1234 (string) - typeがuseridの場合　記入された回答のリスト
+                    + 10 (number) - typeがsingleの場合 選択された選択肢のID
+
++ Response 200 (application/json)
+
++ Response 400 (application/json)
+    + Attributes
+        + error (string, required)
+
++ Response 401 (application/json)
+    + Attributes
+        + error (string, required)

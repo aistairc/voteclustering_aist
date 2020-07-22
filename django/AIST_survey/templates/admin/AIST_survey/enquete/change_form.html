@@ -1,0 +1,15 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+<li>
+  <a href="{% url 'admin:AIST_survey_enquete_change' object_id %}password" class="addlink">
+    パスワードの変更
+  </a>
+</li>
+<li>
+  <a href="{% url 'admin:AIST_survey_enquete_change' object_id %}export_json" class="addlink">
+    モデルのエクスポート
+  </a>
+</li>
+{{ block.super }}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% load i18n %}
+<div class="page page_top">
+  <div class="header_top">
+    {% get_current_language as LANGUAGE_CODE %}
+    {% if LANGUAGE_CODE == 'ja' %}
+      <img src="/static/AIST_survey/img/logo.png" class="header-logo_top">
+    {% else %}
+      <img src="/static/AIST_survey/img/logo_en.png" class="header-logo_top">
+    {% endif %}
+    <img src="/static/AIST_survey/img/help.svg" class="header-help">
+  </div>
+  <div class="body">
+    <div>
+      <div class="top-main">
+        <img src="/static/AIST_survey/img/icon_white.png" class="for-small img-icon">
+        <img src="/static/AIST_survey/img/logo_centering.png" class="for-small img-logo">
+
+        <p class="top-enquete-title"></p>
+        <form>
+          {% csrf_token %}
+          <div class="js-form-password form-label">Password<span
+            class="validation_error">{% trans 'パスワードが正しくありません。' %}</span></div>
+          <input type="password" class="nonborder js-form-password" id="password" name="password" placeholder="888888">
+          <button type="submit">START</button>
+        </form>
+      </div>
+      <div class="top-sub for-nonsmall">
+        <img src="/static/AIST_survey/img/top/pc.png" class="img-pc">
+        <img src="/static/AIST_survey/img/top/sp.png" class="img-sp">
+      </div>
+    </div>
+  </div>
+  <div>
+    <small class="copyright">&copy; 2020 National Institute of Advanced Industrial Science and Technology (AIST)</small>
+  </div>
+</div>

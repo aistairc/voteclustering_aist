@@ -1,0 +1,115 @@
+@each $dir in row, column {
+    .flex-#{$dir} {
+        display: flex;
+        flex-direction: $dir;
+    }
+
+    @each $jc in center, start, end, space-around, space-between {
+        $jc_prop: $jc;
+        @if $jc == start {
+            $jc_prop: flex-start;
+        };
+        @if $jc == end {
+            $jc_prop: flex-end;
+        };
+
+        .flex-#{$dir}-#{$jc} {
+            display: flex;
+            flex-direction: $dir;
+            justify-content: $jc_prop;
+        }
+
+        @each $ai in center, start, end, stretch {
+            $ai_prop: $ai;
+            @if $ai == start {
+                $ai_prop: flex-start;
+            };
+            @if $ai == end {
+                $ai_prop: flex-end;
+            };
+
+            .flex-#{$dir}-#{$jc}-#{$ai} {
+                display: flex;
+                flex-direction: $dir;
+                justify-content: $jc_prop;
+                align-items: $ai_prop;
+            }
+        }
+    }
+}
+
+@for $i from 2 through 10 {
+    .grid-row-span#{$i} {
+        grid-row: span $i;
+    }
+    .grid-column-span#{$i} {
+        grid-column: span $i;
+    }
+}
+
+@each $item in left, center, right {
+    .text-align-#{$item} {
+        text-align: $item;
+    }
+}
+
+@each $item in static, relative, absolute, fixed {
+    .position-#{$item} {
+        position: $item;
+    }
+}
+
+.flex-max {
+    flex: 1 0 auto !important;
+}
+
+.flex-min {
+    flex: 0 1 auto !important;
+}
+
+.flex-fixed {
+    flex: 1 1 auto !important;
+}
+
+@for $i from 0 through 20 {
+    .w-#{$i * 5} {
+        width: $i * 5% !important;
+    }
+}
+
+.w-auto {
+    width: auto !important;
+}
+
+@for $i from 1 through 10 {
+    .m-#{$i}em {
+        margin: #{$i}em !important;
+    }
+    .mt-#{$i}em {
+        margin-bottom: #{$i}em !important;
+    }
+    .mr-#{$i}em {
+        margin-right: #{$i}em !important;
+    }
+    .mb-#{$i}em {
+        margin-bottom: #{$i}em !important;
+    }
+    .ml-#{$i}em {
+        margin-left: #{$i}em !important;
+    }
+
+    .w-#{$i}em {
+        width: #{$i}em !important;
+    }
+    .f-#{$i}em {
+        flex: 0 0 #{$i}em !important;
+    }
+}
+
+.center {
+    text-align: center;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}

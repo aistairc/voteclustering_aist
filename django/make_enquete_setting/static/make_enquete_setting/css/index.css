@@ -1,0 +1,44 @@
+.delete-question-button {
+    margin-bottom: 20px;
+}
+
+#zip_password_form {
+    margin-top: 20px;
+}
+
+.form-control::placeholder {
+    color: #cccccc;
+}
+
+.form-check {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.form-group {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 0px;
+}
+
+.row {
+    margin-right: 0px;
+}
+
+.delete-choice-group {
+    display: flex;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.tooltip-inner {
+    max-width: 100%;
+}
+
+.form-text {
+    padding-left: 15px;
+}
+
+#term_of_service {
+    height: 200px;
+}

@@ -1,0 +1,136 @@
+{% load i18n %}
+<div class="page page_question" data-type="">
+  <div class="header">
+    <div>
+      <img src="/static/AIST_survey/img/menu.png" class="header-menu">
+      {% get_current_language as LANGUAGE_CODE %}
+      {% if LANGUAGE_CODE == 'ja' %}
+        <div class="header-logo-ja"></div>
+      {% else %}
+        <div class="header-logo-en"></div>
+      {% endif %}
+      <img src="/static/AIST_survey/img/help.svg" class="header-help">
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="body-scroller">
+      <div class="body-header">
+        <div class="progress-outer">
+          <div class="progress-inner"></div>
+        </div>
+      </div>
+      <div class="question-wrapper">
+        <div class="question-main">
+          <div class="question-sentence">
+            <img src="/static/AIST_survey/img/icon.png" class="question-sentence-icon">
+            <h1 class="question-sentence-text">&nbsp;</h1>
+          </div>
+          <div class="question-type-area question-type-area_hidden question-type-area_singletext">
+            <input type="text" class="question-answer">
+            <ul class="error-list"></ul>
+          </div>
+          <div class="question-type-area question-type-area_hidden question-type-area_userid">
+            <input type="text" class="question-answer">
+            <ul class="error-list"></ul>
+          </div>
+          <div class="question-type-area question-type-area_hidden question-type-area_single"></div>
+          <div class="question-type-area question-type-area_hidden question-type-area_multi"></div>
+          <div class="question-type-area question-type-area_hidden question-type-area_tos"></div>
+          <div class="question-type-area question-type-area_hidden question-type-area_thanks">
+            <button type="button" class="question-button-home">{% trans 'HOMEへ' %}</button>
+          </div>
+          <div class="question-buttons question-buttons_show question-buttons_inner">
+            <button type="button" class="question-button-skip">skip</button>
+            <button type="button" class="question-button-next">NEXT</button>
+          </div>
+        </div>
+
+        <div class="question-type-area question-type-area_hidden question-type-area_question">
+          <h2></h2>
+          <div class="opinion-list"></div>
+
+          <div class="opinion-more-wrapper">
+            <div class="opinion-more disabled">
+              <div class="opinion-item-info">
+                <img src="/static/AIST_survey/img/question/free.svg">
+              </div>
+              <div class="opinion-item-balloon-wrapper">
+                <div class="opinion-item-balloon">
+                  <div class="opinion-more-circle"></div>
+                  {% trans 'みんなの意見をもっとみる' %}
+                </div>
+              </div>
+            </div>
+
+            <div class="opinion-loading">{% trans '読み込み中' %}</div>
+          </div>
+          <div class="opinion-free">
+            <div class="opinion-item-info">
+              <img src="/static/AIST_survey/img/question/free.svg">
+            </div>
+            <div class="opinion-item-balloon-wrapper">
+              <div class="opinion-item-balloon">
+                <textarea placeholder="近い意見がない場合は記入してください"></textarea>
+                <ul class="error-list"></ul>
+              </div>
+              <div class="suggest-list-wrapper" style="display: none;">
+                <div class="suggest-left"></div>
+                <ul class="suggest-list"></ul>
+                <div class="suggest-right"></div>
+              </div>
+            </div>
+          </div>
+          <div class="question-buttons question-buttons_show question-buttons_inner">
+            <button type="button" class="question-button-skip">skip</button>
+            <button type="button" class="question-button-next">NEXT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirm-popup question-confirm-popup">
+      <!-- .question-confirm-popup-num 要素の箇所に選択した項目数がJSによりセットされる -->
+      <div class="confirm-popup-modal">
+        <p>{% trans '本当にいいねは<span class="question-confirm-popup-num">1</span>つのみで<br>よろしいでしょうか？' %}</p>
+        <p>{% trans '目安は<span class="question-confirm-popup-min-num">2</span>つ以上です。' %}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="menu">
+  <ul>
+    <li class="menu-home">HOME</li>
+    <li class="menu-title"></li>
+    <li class="menu-tos">{% trans '利用規約' %}</li>
+  </ul>
+  <div class="menu-back">
+    <div class="menu-close_button"></div>
+  </div>
+</div>
+
+<div class="confirm-popup home-confirm-popup">
+  <div>
+    {% trans '回答結果を破棄して<br>アンケートを終了しますか？' %}
+    <div class="confirm-popup-buttons">
+      <button class="home-confirm-popup-continue">{% trans 'アンケートを続ける' %}</button>
+      <button class="home-confirm-popup-finish">{% trans '終了する' %}</button>
+    </div>
+  </div>
+</div>
+
+<div class="popup popup-tos">
+  <div class="popup-balloon">
+    <img src="/static/AIST_survey/img/guide/close.svg" class="popup-close">
+    <div class="popup-body">
+      {% trans '利用規約（前半）' %}
+      <ul>
+        {% for line in term_of_service %}
+          <li>{{ line }}</li>
+        {% endfor %}
+      </ul>
+      {% trans '利用規約（後半）' %}
+    </div>
+  </div>
+</div>

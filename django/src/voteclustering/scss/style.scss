@@ -1,0 +1,18 @@
+@import 'reset';
+@import 'bootstrap';
+@import 'function';
+@import 'keyframes';
+@import 'element';
+@import 'design';
+@import 'popup';
+@import 'page_common';
+
+html, body {
+    &[data-page='question'] {
+        background-color: #CDD6DC;
+    }
+    a {
+        color: blue;
+        text-decoration: underline;
+    }
+}

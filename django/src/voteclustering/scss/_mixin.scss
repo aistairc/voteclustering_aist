@@ -1,0 +1,110 @@
+@function flex_property_for_ie($value) {
+    @return if($value == flex-start, start, if($value == flex-end, end, if($value == space-between, justify, $value)));
+}
+
+@mixin display_flex($direction: row, $justify-content: flex-start, $align-items: stretch) {
+    display: flex;
+
+    @include flex-direction($direction);
+    @include justify-content($justify-content);
+    @include align-items($align-items);
+}
+
+@mixin display_inline_flex($direction: row, $justify-content: flex-start, $align-items: stretch) {
+    display: inline-flex;
+
+    @include flex-direction($direction);
+    @include justify-content($justify-content);
+    @include align-items($align-items);
+}
+
+@mixin flex-direction($direction) {
+    flex-direction: $direction;
+}
+
+@mixin flex-wrap($wrap, $align-content: stretch) {
+    flex-wrap: $wrap;
+    align-content: $align-content;
+}
+
+@mixin align-items($position) {
+    align-items: $position;
+}
+
+@mixin align-content($position) {
+    align-content: $position;
+}
+
+@mixin justify-content($position) {
+    justify-content: $position;
+}
+
+@mixin align-self($position) {
+    align-self: $position;
+}
+
+@mixin flex-min($size: auto) {
+    flex-glow: 0;
+    flex-shrink: 1;
+    flex-basis: $size;
+}
+
+@mixin flex-max($size: auto) {
+    flex-glow: 1;
+    flex-shrink: 1;
+    flex-basis: $size;
+}
+
+@mixin flex-grow($grow) {
+    flex-grow: $grow;
+}
+
+@mixin flex-shrink($shrink) {
+    flex-shrink: $shrink;
+}
+
+@mixin flex-basis($basis) {
+    flex-basis: $basis;
+}
+
+@mixin sp() {
+    @media only screen and (max-width: 599px) {
+        @content;
+    }
+}
+
+@mixin pc() {
+    @media only screen and (min-width: 600px) {
+        @content;
+    }
+}
+
+@mixin for-small() {
+    @media screen and (max-width: 799px) {
+        @content;
+    }
+}
+
+@mixin for-non-small() {
+    @media screen and (min-width: 799px) {
+        @content;
+    }
+}
+
+@mixin for-large() {
+    @media screen and (min-width: 800px) {
+        @content;
+    }
+}
+
+@mixin keyframes($animation-name) {
+    @-webkit-keyframes #{$animation-name} {
+        @content;
+    }
+    @-moz-keyframes #{$animation-name} {
+        @content;
+    }
+    @keyframes #{$animation-name} {
+        @content;
+    }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<aside class="main-sidebar">
+  <!-- sidebar: style can be found in sidebar.less -->
+  <section class="sidebar">
+    <ul class="sidebar-menu" data-widget="tree">
+      <li class="header">{% trans 'メインメニュー' %}</li>
+      <li>
+        <a href="{% url 'index' %}">
+          <i class="fa fa-home"></i> <span>{% trans 'ホーム' %}</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'users' %}">
+          <i class="fa fa-users"></i> <span>{% trans 'ユーザ一覧' %}</span>
+        </a>
+      </li>
+      {% comment %}
+      <li>
+        <a href="{% url 'sankey' %}">
+          <i class="fa fa-project-diagram"></i> <span>{% trans 'Sankey-diagram' %}</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'hierarchical' %}">
+          <i class="fa fa-circle"></i> <span>{% trans 'HierarchicalEdgeBundling' %}</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'network_plot' %}">
+          <i class="fab fa-hubspot"></i> <span>{% trans 'NetworkPlot' %}</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'sunburst' %}">
+          <i class="fas fa-sun"></i> <span>{% trans 'sunburst' %}</span>
+        </a>
+      </li>
+      {% endcomment %}
+    </ul>
+  </section>
+  <!-- /.sidebar -->
+</aside>

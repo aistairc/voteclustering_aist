@@ -1,0 +1,139 @@
+{% load static compress widget_tweaks i18n %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <!--
+    共通で利用するCSSはここに記述してください
+    個別のページで利用するCSSはここに記述するではなく{#{% block extra_css %}#}を利用して個別のhtmlファイルから追加してください
+     -->
+    {% compress css %}
+      <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css"
+            charset="UTF-8">
+      <link rel="stylesheet" href="{% static 'make_enquete_setting/css/base.css' %}" type="text/css"
+            charset="UTF-8">
+      <link rel="stylesheet" href="{% static 'css/parsley.css' %}" type="text/css" charset="UTF-8">
+      {% block extra_css %}{% endblock %}
+    {% endcompress %}
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>{% block title %}Make Enquete Setting{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark">
+      <a href="#" class="navbar-brand">{% trans 'アンケート設定' %}</a>
+      <button type="button" class="btn btn-secondary" data-toggle="modal"
+              data-target="#import-modal">{% trans '設定のインポート' %}</button>
+    </nav>
+    <div class="container">
+      {% if import_error %}
+        <div class="alert alert-danger" role="alert">{{ import_error }}</div>
+        {% for error in form_data.file.errors %}
+          <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}
+        {{ block }}
+      {% endblock %}
+    </div>
+    <div class="modal fade" id="import-modal" tabindex="-1"
+         role="dialog" aria-labelledby="import-modal-label" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              {% trans '設定ファイルをインポートし再編集' %}
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form method="post" action="{% url 'make_enquete_setting:index' %}" class="import-setting-form"
+                enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="form-group">
+                <div class="alert alert-warning">
+                  {% trans 'セキュリティの都合上、アンケートのパスワードと設定ファイル用パスワードはインポートされません' %}
+                </div>
+                <!--
+                 設定ファイルのアップロード用フォーム
+                 デフォルトのファイル用フォームは見た目が悪いのでカスタマイズしている
+                 参考URL：https://qiita.com/ynakahira/items/46d44793827920282f75
+                 -->
+                <div class="input-group">
+                  <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                      {% trans 'ファイルを選択' %}{{ form.file|add_class:"import-setting-btn" }}
+                    </span>
+                  </label>
+                  <input type="text" class="form-control" readonly="">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" id="import-setting-btn" type="submit">{% trans 'インポート' %}</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+    <!--
+    共通で利用するJSはここに記述してください
+    個別のページで利用するJSはここに記述するではなく{#{% block extra_js %}#}を利用して個別のhtmlファイルから追加してください
+     -->
+    {% compress js %}
+      <script src="{% static 'js/jquery-3.3.1.min.js' %}" type="text/javascript"
+              charset="UTF-8"></script>
+      <script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"
+              charset="UTF-8"></script>
+      <script src="{% static 'js/parsley.min.js' %}" type="text/javascript" charset="UTF-8"></script>
+      {% get_current_language as LANGUAGE_CODE %}
+      {% if LANGUAGE_CODE == 'ja' %}
+        <script src="{% static 'js/parsley-ja.js' %}" type="text/javascript" charset="UTF-8"></script>
+        <script src="{% static 'js/parsley-ja.extra.js' %}" type="text/javascript" charset="UTF-8"></script>
+      {% elif LANGUAGE_CODE == 'en' %}
+        <script src="{% static 'js/parsley-en.js' %}" type="text/javascript" charset="UTF-8"></script>
+        <script src="{% static 'js/parsley-en.extra.js' %}" type="text/javascript" charset="UTF-8"></script>
+      {% endif %}
+      <script src="{% static 'js/moment.min.js' %}" type="text/javascript" charset="UTF-8"></script>
+      <script src="{% static 'js/jquery-ui.min.js' %}" type="text/javascript" charset="UTF-8"></script>
+      <script src="{% static 'make_enquete_setting/js/base.js' %}" type="text/javascript" charset="UTF-8"></script>
+      <script>
+        // アンケート設定ファイルのインポートボタン用Javascript
+        // ファイルが選択されるとファイル名をフォームに表示する
+        $(document).on('change', ':file', function () {
+          const input = $(this),
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+          input.parent().parent().next(':text').val(label);
+        });
+
+        // jsファイルに渡すための翻訳カタログ
+        const translate_catalog = {
+          '質問文': '{% trans '質問文' %}',
+          '必須': '{% trans '必須' %}',
+          '(例) 保健室を利用した理由を教えてください': '{% trans '(例) 保健室を利用した理由を教えてください' %}',
+          '回答種別': '{% trans '回答種別' %}',
+          '他者の回答を表示しない [＊ 自由記述形式の場合のみ]': '{% trans '他者の回答を表示しない [＊ 自由記述形式の場合のみ]' %}',
+          '各選択肢に対して、過去の回答者数を表示する': '{% trans '各選択肢に対して、過去の回答者数を表示する' %}',
+          '最低いいね数': '{% trans '最低いいね数' %}',
+          '自由回答かつ他者の回答を表示する場合必須': '{% trans '自由回答かつ他者の回答を表示する場合必須' %}',
+          '回答例': '{% trans '回答例' %}',
+          '任意': '{% trans '任意' %}',
+          '回答欄のプレースホルダーを入力してください': '{% trans '回答欄のプレースホルダーを入力してください' %}',
+          'この質問をスキップ可能にする': '{% trans 'この質問をスキップ可能にする' %}',
+          '選択肢を追加': '{% trans '選択肢を追加' %}',
+          '選択肢': '{% trans '選択肢' %}',
+          '風邪を引いたため': '{% trans '風邪を引いたため' %}',
+          'この質問への回答データを公開する': '{% trans 'この質問の回答データを公開する' %}',
+        }
+      </script>
+      {% block extra_js %}{% endblock %}
+    {% endcompress %}
+    <footer class="footer">
+      <div class="container">
+        <small class="copyright">&copy; 2020 National Institute of Advanced Industrial Science and Technology (AIST)</small>
+      </div>
+    </footer>
+  </body>
+</html>
