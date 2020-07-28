@@ -1,3 +1,3 @@
 cd `dirname $0`
 cd ../../
-./cli-darwin-amd64 -c logall
+./cli-linux-amd64 -c logall
