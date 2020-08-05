@@ -4,8 +4,8 @@
 
 #### リポジトリのクローン
 ```sh
-$ git clone https://github.com/aistairc/bonsci_survey_application_django.git
-$ cd bonsci_survey_application_django
+$ git clone https://github.com/aistairc/voteclustering_aist.git
+$ cd voteclustering_aist
 ```
 - **環境設定用ファイルである.env, container.envを用意して、それぞれ `/django/.env`, `/container.env`に配置**
 
@@ -44,7 +44,7 @@ $ make up-dev
 
 #### ユーザに権限を付与
 ```sh
-$ docker-compose exec mysql mysql -u root -p -e "grant all privileges on *.* to bonsci@'%'; flush privileges;"
+$ docker-compose exec mysql mysql -u root -p -e "grant all privileges on *.* to voteclustering@'%'; flush privileges;"
 ```
 
 #### テストの実行

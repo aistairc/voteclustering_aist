@@ -1,5 +1,5 @@
 """
-WSGI config for bonsci_survey_application_django project.
+WSGI config for voteclustering_aist project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
