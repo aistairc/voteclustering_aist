@@ -11,12 +11,12 @@ $ cd voteclustering_aist
 
 #### データベースの構築
 ```sh
-$ make migrate-dev
+$ make migrate
 ```
 
 #### スーパーユーザーの設定（Adminページに入る際に必要）
 ```sh
-$ make create-superuser-dev username=admin email=admin@example.com
+$ make create-superuser username=admin email=admin@example.com
 ```
 
 #### Dockerの起動
@@ -36,8 +36,8 @@ $ make up-dev
         - Adminページにおけるモデルやフィールドの表示に必要となる
 1. [manage_ERD_manual.md](manage_ERD_manual.md)を確認しながらER図を更新
 1. `django/AIST_survey/admin.py`から`EnqueteAdmin`クラス内の`import_enquete_setting_view`関数内に該当するフィールドを受け取る処理の追加
-1. `$ make makemigrations-dev`でマイグレーションファイルを作成
-1. `$ make migrate-dev`でマイグレート
+1. `$ make makemigrations`でマイグレーションファイルを作成
+1. `$ make migrate`でマイグレート
 
 
 ## 自動テスト

@@ -23,7 +23,7 @@ migrate: ## migrate database
 	docker-compose run --rm django python3 manage.py migrate
 
 .PHONY: create-superuser
-create-superuser: ## create superuser (usage: make create-superuser-dev username=[username] email=[email])
+create-superuser: ## create superuser (usage: make create-superuser username=[username] email=[email])
 	docker-compose run --rm django python3 manage.py createsuperuser --username ${username} --email ${email}
 
 .PHONY: restart-dev
