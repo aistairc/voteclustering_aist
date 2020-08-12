@@ -1,9 +1,10 @@
 import random
 
 from django.db import models
-from django.utils import timezone
-
 from . import Question
+# なぜか . からRespondentがimportできなかった
+from .respondent import Respondent
+from django.utils import timezone
 
 
 class ChoiceManager(models.Manager):
@@ -25,6 +26,7 @@ class ChoiceManager(models.Manager):
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='choices')
+    respondent = models.ForeignKey(Respondent, blank=True, null=True, on_delete=models.CASCADE)
     text = models.TextField(max_length=500)
     objects = ChoiceManager()
     timestamp = models.DateTimeField(default=timezone.now)

@@ -33,7 +33,7 @@ def add_answer(enquete_id, answer_list, respondent_data, ip):
             # 自由回答のデータを追加
             if len(answer['answer']['free']) > 0:
                 for i in answer['answer']['free']:
-                    new_choice = Choice.objects.create(question=answer_question, text=i)
+                    new_choice = Choice.objects.create(question=answer_question, respondent=answer_respondent, text=i)
                     Evaluation.objects.create(
                         respondent=answer_respondent, choice=new_choice, like=1, assessment=Evaluation.PROPOSED
                     )

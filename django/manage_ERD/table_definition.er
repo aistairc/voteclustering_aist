@@ -25,6 +25,7 @@ is_result_public {label:"TINYINT(1)"}
 [choice]
 id {label:"INT"}
 question_id {label:"INT"}
+respondent_id {label:"INT"}
 text {label:"LONGTEXT"}
 timestamp {label:"DATETIME"}
 
@@ -48,4 +49,5 @@ enquete 1--* question
 enquete 1--* respondent
 respondent 1--* evaluation
 question 1--* choice
+respondent 1--* choice
 choice 1--* evaluation

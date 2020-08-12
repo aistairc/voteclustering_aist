@@ -46,6 +46,7 @@
 |---|---|:---:|:---:|:---:|:---:|---|
 | ID | id | INT | - | NOT NULL | - | - |
 | 設問ID | question_id | INT | - | NOT NULL | - | 外部キー |
+| 回答者ID | respondent_id | INT | - | NULLABLE | - | 外部キー |
 | 本文 | text | LONGTEXT | - | NOT NULL | - | - |
 | タイムスタンプ | timestamp | DATETIME | - | NOT NULL | django.utils.timezone.now | 最初に作成された日時を記録 |
 

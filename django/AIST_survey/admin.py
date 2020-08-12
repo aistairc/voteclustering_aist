@@ -269,13 +269,13 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 class ChoiceAdmin(admin.ModelAdmin):
-    fields = ['question', 'text', 'timestamp']
+    fields = ['question', 'respondent', 'text', 'timestamp']
     ordering = ['id']
     list_filter = [
         ('question__enquete', MyListFilter),
         ('question', ListFilterFromEnqueteForChoice)
     ]
-    list_display = ['id', 'enquete', 'question', 'text', 'timestamp']
+    list_display = ['id', 'enquete', 'question', 'respondent', 'text', 'timestamp']
     list_display_links = ['text']
 
     # list_displayに対応したメソッド
