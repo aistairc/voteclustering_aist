@@ -50,8 +50,7 @@
             </div>
         </div>
 
-        <small class="copyright text-align-center">&copy; 2020 National Institute of Advanced Industrial Science and
-            Technology (AIST)
+        <small class="copyright text-align-center">
         </small>
     </div>
 </template>
