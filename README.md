@@ -39,18 +39,9 @@ A version of voteclustering that is developed and maintained by AIST.
     ├── config/                     # Djangoの設定ファイル群
     ├── manage_ERD/                 # ER図を作成するためのファイル群
     ├── AIST_survey/                # アンケートアプリケーション本体
-    ├── api/                        # webAPI用アプリケーション
     ├── dashboard/                  # アンケートの集計結果を表示するアプリケーション 
     └── make_enquete_setting/       # 新規アンケートを作成するためのアプリケーション
 ```
-
-## ブランチ
-git flowに従ってブランチを作成する
-- `master`: 本番環境に適用するさいにマージされるブランチ
-- `develop`: 開発を進めるためのメインとなるブランチ
-- `feature/*`: 機能開発を進める際に利用するブランチ（対応するissueが存在する場合はprefixとしてissue番号を付けること）
-- `hotfix/*`: 緊急のバグ対応を行う際にmasterから切るブランチ（対応するissueが存在する場合はprefixとしてissue番号を付けること）
-- `release/*`: リリース作業を行うブランチ　現在は特に作業は存在しない（ブランチ名にはバージョンを用いること）
 
 ## ウェブサイトURL
 - `.../admin`
@@ -66,20 +57,18 @@ git flowに従ってブランチを作成する
 
 ----
 
-## 簡単セットアップ
-
-環境を容易にセットアップするツールの利用方法について説明します。
+## セットアップ手順
 
 ### 前提条件
 
 [Get Started with Docker | Docker](https://www.docker.com/get-started) より、各自の OS にあった Docker Desktop をインストールしておく必要があります。
 
-### 事前準備
-
-`docs/development_manual.md` にも記載があるとおり、あらかじめ 2 つの環境ファイルを用意しておく必要があります。
-
-- `/django/.env`
-- `/container.env`
+### リポジトリのクローン
+```sh
+$ git clone https://github.com/aistairc/voteclustering_aist.git
+$ cd voteclustering_aist
+```
+### 環境設定用ファイルである.env, container.envを用意して、それぞれ `/django/.env`, `/container.env`に配置
 
 .envの内容
 
@@ -103,86 +92,39 @@ MYSQL_PASSWORD=
 
 設定ファイルとして提供されるサンプルを参考に、適宜設定値を変更します。
 
-### ツールの構成
-
-ルートディレクトリにはツールの本体となるバイナリファイルが置かれています。
-
-- cli-darwin-amd64 — macOS 用の CLI ツール
-- cli-linux-amd64 — Linux 用の CLI ツール
-- cli-windows-amd64 — Windows 用の CLI ツール
-
-いずれも、64 bit OS 用のバイナリです。32 bit 環境では動作しないことに注意してください。
-
-そして `tools` ディレクトリ以下に OS ごとのバッチファイルを用意しています。
-
+### Dockerの起動
+開発環境の場合
+```sh
+$ make up-dev
 ```
-tools
-├── linux
-├── mac
-└── windows
+本番環境の場合
+```sh
+$ make up-prod
 ```
 
-OS ごとのディレクトリには、次のようなファイルが置かれています (Windows の例)。
-
-```
-tools
-└── windows
-    ├── collectstatic.bat
-    ├── compilemessages.bat
-    ├── createsu.bat
-    ├── generateerd.bat
-    ├── logall.bat
-    ├── logdjango.bat
-    ├── makemessages.bat
-    ├── migrate.bat
-    ├── restart.bat
-    ├── setup.bat
-    ├── start-dev.bat
-    ├── start-prod.bat
-    └── stop.bat
+### `django/package.json`内に記述した`all`コマンドを実行
+```sh
+$ make yarn-all
 ```
 
-### ツールの使い方
-
-#### 初めて起動する
-
-`start-dev.bat` (Windows の場合) を起動します。初回起動時は、Docker コンテナをゼロから構築するため、20分〜30分程度の時間を要します (ネットワーク環境や端末による)。正常に完了すると、ターミナル画面には Django、MySQL そして phpMyAdmin が起動したことを示すログが出力されます。この画面は停止せず、そのままの状態を保ってください。
-
-次に、環境の初期セットアップのために `setup.bat` を起動します。途中で、管理者の名前とメールアドレスの入力が求められます。これは、Django の管理画面にログインする管理者となります。
-
-```
-username: admin
-email: admin@example.com
+### データベースの構築
+```sh
+$ make migrate
 ```
 
-上のように設定します。パスワードは一律固定で `admin` としていますので、環境構築後すぐに管理画面よりパスワード変更を行ってください。
+### スーパーユーザーの設定（Adminページに入る際に必要）
+```sh
+$ make create-superuser username=admin email=admin@example.com
+```
 
-管理者作成を完了すると、ブラウザから管理画面にアクセスすることができます。
+### 起動中のコンテナを停止する
+```sh
+$ docker-compose down
+```
 
-http://localhost/admin/
+### 次回以降の起動
 
-にアクセスしてみましょう。
+開発環境なら `make up-dev` を、本番環境なら `make up-prod` を実行するだけで、前回終了時と同じ状態で利用を始めることができます。
 
-#### 起動中のコンテナを停止する
-
-`stop.bat` を起動します。
-
-#### 次回以降の起動
-
-`start-dev.bat` を起動するだけで、前回終了時と同じ状態で利用を始めることができます。
-
-#### すべてのバッチファイルの説明
-
-- collectstatic.bat — 静的コンテンツを収集する
-- createsu.bat — 管理者ユーザを作成する
-- generateerd.bat — ERD を作成する
-- logall.bat — Django, MySQL, phpMyAdmin のログを一括で表示する
-- logdjango.bat — Django のみのログを表示する
-- makemessages.bat — 翻訳用テキストファイルを作成する
-- compilemessages.bat — 翻訳用テキストファイルをコンパイルする
-- migrate.bat — Django のマイグレーションファイルに基づいてデータベースを更新する
-- restart.bat — コンテナを再起動する
-- setup.bat — 起動したコンテナの初期セットアップを実行する
-- start-dev.bat — `docker-compose.development.yml` を利用してコンテナを起動する
-- start-prod.bat — `docker-compose.production.yml` を利用してコンテナを起動する
-- stop.bat — 起動中のコンテナを停止する
+### Makeコマンドの詳細
+[docs/makefile_manual.md](docs/makefile_manual.md) を参照
