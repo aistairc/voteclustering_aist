@@ -93,11 +93,6 @@ MYSQL_PASSWORD=
 設定ファイルとして提供されるサンプルを参考に、適宜設定値を変更します。
 
 ### Dockerの起動
-開発環境の場合
-```sh
-$ make up-dev
-```
-本番環境の場合
 ```sh
 $ make up-prod
 ```
@@ -124,7 +119,7 @@ $ docker-compose down
 
 ### 次回以降の起動
 
-開発環境なら `make up-dev` を、本番環境なら `make up-prod` を実行するだけで、前回終了時と同じ状態で利用を始めることができます。
+`make up-prod` を実行するだけで、前回終了時と同じ状態で利用を始めることができます。
 
 ### Makeコマンドの詳細
 [docs/makefile_manual.md](docs/makefile_manual.md) を参照
