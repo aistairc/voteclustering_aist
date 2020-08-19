@@ -106,7 +106,7 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
+# .env
 .venv
 env/
 venv/
@@ -243,7 +243,7 @@ $RECYCLE.BIN/
 .idea/
 
 # env file
-container.env
+# container.env
 
 
 # Created by https://www.gitignore.io/api/node
@@ -315,7 +315,7 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+# .env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)
