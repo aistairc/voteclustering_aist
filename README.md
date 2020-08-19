@@ -68,29 +68,39 @@ A version of voteclustering that is developed and maintained by AIST.
 $ git clone https://github.com/aistairc/voteclustering_aist.git
 $ cd voteclustering_aist
 ```
-### 環境設定用ファイルである.env, container.envを用意して、それぞれ `/django/.env`, `/container.env`に配置
+### 環境設定用ファイルである`/django/.env`, `/container.env`の内容を変更
 
-.envの内容
+初めは`/django/.env`と`/container.env`には仮の設定値が入っているので、適宜設定値を変更します。
 
-```
-DEBUG=
-ALLOWED_HOSTS=
-SECRET_KEY=
-DATABASES_NAME=
-DATABASES_PASSWORD=
-DATABASES_USER=
-```
-
-container.envの内容
+/django/.envの初めの内容
 
 ```
-MYSQL_ROOT_PASSWORD=
-MYSQL_DATABASE=
-MYSQL_USER=
-MYSQL_PASSWORD=
+DEBUG=True
+ALLOWED_HOSTS=localhost
+SECRET_KEY=admin_secret_key
+DATABASES_NAME=admin_database
+DATABASES_PASSWORD=admin_password
+DATABASES_USER=admin_user
+
 ```
 
-設定ファイルとして提供されるサンプルを参考に、適宜設定値を変更します。
+/container.envの初めの内容
+
+```
+MYSQL_ROOT_PASSWORD=admin_root_password
+MYSQL_DATABASE=admin_database
+MYSQL_USER=admin_user
+MYSQL_PASSWORD=admin_password
+
+```
+
+- 本番環境ではDEBUGをFalseに設定してください。
+
+- ALLOWED_HOSTSには公開するドメイン名やIPアドレスを設定してください。
+
+- 「DATABASES_NAMEとMYSQL_DATABASE」、「DATABASES_PASSWORDとMYSQL_PASSWORD」、「DATABASES_USERとMYSQL_USER」の組み合わせには同じ値を設定してください。
+
+- SECRET_KEY、MYSQL_ROOT_PASSWORD、MYSQL_PASSWORDには第三者に推測されにくい値（ランダムな文字列など）を設定してください。
 
 ### Dockerの起動
 ```sh
