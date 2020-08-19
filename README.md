@@ -127,6 +127,9 @@ $ make restart-prod
 ```sh
 $ make create-superuser username=admin email=admin@example.com
 ```
+以上でセットアップは完了です。
+
+## コンテナの停止と起動のコマンド
 
 ### 起動中のコンテナを停止する
 ```sh
