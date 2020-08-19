@@ -70,9 +70,9 @@ $ cd voteclustering_aist
 ```
 ### 環境設定用ファイルである`/django/.env`, `/container.env`の内容を変更
 
-初めは`/django/.env`と`/container.env`には仮の設定値が入っているので、適宜設定値を変更します。
+`/django/.env`と`/container.env`には仮の設定値が入っているので、適宜設定値を変更します。
 
-/django/.envの初めの内容
+/django/.envの仮の設定値
 
 ```
 DEBUG=True
@@ -84,7 +84,7 @@ DATABASES_USER=admin_user
 
 ```
 
-/container.envの初めの内容
+/container.envの仮の設定値
 
 ```
 MYSQL_ROOT_PASSWORD=admin_root_password
