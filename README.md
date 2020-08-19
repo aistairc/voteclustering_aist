@@ -107,6 +107,12 @@ $ make yarn-all
 $ make migrate
 ```
 
+### 翻訳テキストの反映
+```sh
+$ make compilemessages
+$ make restart-prod
+```
+
 ### スーパーユーザーの設定（Adminページに入る際に必要）
 ```sh
 $ make create-superuser username=admin email=admin@example.com
