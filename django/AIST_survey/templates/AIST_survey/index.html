@@ -137,81 +137,81 @@
         language: 'ja', // 'en'
         languages: {
           top: {
-            passwordError: 'パスワードが正しくありません。',
-            beforeMessage: '現在アンケート開始前です',
-            afterMessage: '本アンケートは<br>すでに終了しています',
+            passwordError: '{% trans "パスワードが正しくありません。" %}',
+            beforeMessage: '{% trans "現在アンケート開始前です" %}',
+            afterMessage: '{% trans "本アンケートは<br>すでに終了しています" %}',
           },
 
           tutorial: {
-            helpButton: '使い方の説明',
-            menuButton: '入力した回答を\n再編集できます',
+            helpButton: '{% trans "使い方の説明" %}',
+            menuButton: '{% trans "入力した回答を\n再編集できます" %}',
           },
 
           guidePopup: {
-            title: '投稿方法',
-            point1: 'みんなの意見のなかで、あなたと同じ意見や近い意見をすべて選んでください。',
-            point2: 'オリジナルの意見もある人は、自由記述欄に書き込んでください。',
-            likeTitle: '「いいね」する',
-            likeText:      'みんなの意見のなかで、<br>あなたと同じ意見や近い意見を<br>すべて選んでください。',
-            likeTextForSP: 'みんなの意見のなかで、あなたと同じ意見や近い意見をすべて選んでください。',
-            writeTitle: '自分の意見を書く',
-            writeText:      'オリジナルの意見もある人は、<br>自由記述欄に書き込んでください。',
-            writeTextForSP: 'オリジナルの意見もある人は、自由記述欄に書き込んでください。',
+            title: '{% trans "投稿方法" %}',
+            point1: '{% trans "みんなの意見のなかで、あなたと同じ意見や近い意見をすべて選んでください。" %}',
+            point2: '{% trans "オリジナルの意見もある人は、自由記述欄に書き込んでください。" %}',
+            likeTitle: '{% trans "「いいね」する" %}',
+            likeText:      '{% trans "みんなの意見のなかで、<br>あなたと同じ意見や近い意見を<br>すべて選んでください。" %}',
+            likeTextForSP: '{% trans "みんなの意見のなかで、あなたと同じ意見や近い意見をすべて選んでください。" %}',
+            writeTitle: '{% trans "自分の意見を書く" %}',
+            writeText:      '{% trans "オリジナルの意見もある人は、<br>自由記述欄に書き込んでください。" %}',
+            writeTextForSP: '{% trans "オリジナルの意見もある人は、自由記述欄に書き込んでください。" %}',
           },
 
           question: {
-            moreOpinion: 'みんなの意見をもっとみる',
-            opinionLoading: '読み込み中',
+            moreOpinion: '{% trans "みんなの意見をもっとみる" %}',
+            opinionLoading: '{% trans "読み込み中" %}',
 
             selfOpinion: {
               label: "NEW",
-              cancelButton: "キャンセル",
-              addButton: "追加する",
-              delete: "投稿を削除する",
-              deleteCancel: "キャンセル",
-              multiPoint: "※回答は複数投稿可能です。ポイントごとに分けて投稿してください。",
-              suggest: "回答候補",
+              cancelButton: '{% trans "キャンセル" %}',
+              addButton: '{% trans "追加する" %}',
+              delete: '{% trans "投稿を削除する" %}',
+              deleteCancel: '{% trans "キャンセル" %}',
+              multiPoint: '{% trans "※回答は複数投稿可能です。ポイントごとに分けて投稿してください。" %}',
+              suggest: '{% trans "回答候補" %}',
             },
 
             longtext: {
-              placeholder: "自由記入欄です。",
-              description: "自由記入欄に回答を記入してください",
+              placeholder: '{% trans "自由記入欄です。" %}',
+              description: '{% trans "自由記入欄に回答を記入してください" %}',
             },
 
             question: {
-              placeholder: "近い意見がない場合は記入してください",
-              description: "同じ意見・十分近い意見には <strong>すべて</strong>に「いいね」してください"
+              placeholder: '{% trans "近い意見がない場合は記入してください" %}',
+              description: '{% trans "同じ意見・十分近い意見には <strong>すべて</strong>に「いいね」してください" %}'
             },
 
-            likeNum: "いいね! *N*人",
-            answeredNum: "*N*人が回答",
+            likeNum: '{% trans "いいね! *N*人" %}',
+            answeredNum: '{% trans "*N*人が回答" %}',
 
             next: 'NEXT',
-            nextLast: '送信する',
-            sendFailed: "送信に失敗しました。",
+            nextLast: '{% trans "送信する" %}',
+            sendFailed: '{% trans "送信に失敗しました。" %}',
 
             toTopConfirm: {
-              text: '回答結果を破棄して<br>アンケートを終了しますか？',
-              cancel: 'アンケートを続ける',
-              ok: '終了する',
+              text: '{% trans "回答結果を破棄して<br>アンケートを終了しますか？" %}',
+              cancel: '{% trans "アンケートを続ける" %}',
+              ok: '{% trans "終了する" %}',
             },
 
             minLikeConfirm: {
-              point1: '本当にいいねは*N*つのみで<br>よろしいでしょうか？',
-              point2: '目安は*N*つ以上です。',
+              point1: '{% trans "本当にいいねは*N*つのみで<br>よろしいでしょうか？" %}',
+              point2: '{% trans "目安は*N*つ以上です。" %}',
             },
 
             tos: {
-              title: 'アンケートは以上です。',
-              agree: '<span class="link-tos">利用規約</span>に同意する',
-              menu: '利用規約',
+              title: '{% trans "アンケートは以上です。" %}',
+              agree: '{% trans '<span class="link-tos">利用規約</span>に同意する' %}',
+              menu: '{% trans "利用規約" %}',
               body: '{% trans '利用規約（前半）' %} <ul> {% for line in term_of_service %} <li>{{ line }}</li> {% endfor %} </ul> {% trans '利用規約（後半）' %}',
             },
             //tosBody: '利用規約（前半）' + '<ul><li>各行</li></ul>' + '利用規約（後半）',
 
             thanks: {
-              text: "ご回答ありがとうございました！",
-              back: 'HOMEへ',
+              text: '{% trans "ご回答ありがとうございました！" %}',
+              back: '{% trans "HOMEへ" %}',
             }
           },
 
