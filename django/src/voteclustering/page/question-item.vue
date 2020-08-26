@@ -121,7 +121,7 @@
                             <p v-else>なし</p>
                         </template>
                         <template v-for="free in subQuestion.answer.free">
-                            <label v-if="!subQuestion.without_select" class="free">投稿</label>
+                            <label v-if="!subQuestion.without_select" class="free">NEW</label>
                             <p>{{ free }}</p>
                         </template>
                     </template>
