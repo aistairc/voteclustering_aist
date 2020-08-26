@@ -92,7 +92,7 @@
 
             <!-- 利用規約ページ -->
             <div v-if="question.type == 'tos'" class="question-type-area question-type-area_tos">
-                <h2>あなたの回答</h2>
+                <h2>Your responses</h2>
                 <hr>
                 <template v-for="subQuestion in questionList" v-if="subQuestion.type != 'tos'">
                     <h3 v-html=addQ(subQuestion.question)></h3>
@@ -112,13 +112,13 @@
                     </template>
                     <template v-if="subQuestion.type == 'question'">
                         <template v-if="!subQuestion.without_select">
-                            <label class="agree"><img src="../image/question/heart.svg">いいねした回答</label>
+                            <label class="agree"><img src="../image/question/heart.svg"></label>
                             <ul v-if="subQuestion.opinionList.filter(x => x.select).length">
                                 <li v-for="opinion in subQuestion.opinionList" v-if="opinion.select">{{ opinion.text
                                     }}
                                 </li>
                             </ul>
-                            <p v-else>なし</p>
+                            <p v-else></p>
                         </template>
                         <template v-for="free in subQuestion.answer.free">
                             <label v-if="!subQuestion.without_select" class="free">NEW</label>
